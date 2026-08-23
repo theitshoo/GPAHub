@@ -1,6 +1,6 @@
 # GPA Hub
 
-**GPAHub** is a production-grade ASP.NET Core Web API for academic planning: configurable grading scales, credit-weighted GPA calculation, target-GPA prediction with feasibility analysis, and a Stripe-billed Premium tier that unlocks grade-combination suggestions and PDF reports.
+**GPA Hub** is a production-grade ASP.NET Core Web API for academic planning: configurable grading scales, credit-weighted GPA calculation, target-GPA prediction with feasibility analysis, and a Stripe-billed Premium tier that unlocks grade-combination suggestions and PDF reports.
 
 <p align="center">
   <img src="./docs/assets/banner.svg" alt="GPAHub banner" width="100%" />
