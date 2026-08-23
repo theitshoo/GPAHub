@@ -44,7 +44,7 @@ public sealed class GradeScale
     {
         EnsureNameAvailable(name, definitionIdToExclude: null);
 
-        var definition = new GradeDefinition(name, minMark, maxMark, points);
+        var definition = new GradeDefinition(Guid.NewGuid(), Id, name, minMark, maxMark, points);
 
         EnsureNoOverlap(definition, definitionIdToExclude: null);
 

@@ -7,6 +7,8 @@ public sealed class GradeDefinition
 {
     public Guid Id { get; private set; }
 
+    public Guid GradeScaleId { get; private set; }
+
     public string Name { get; private set; }
 
     public int MinMark { get; private set; }
@@ -20,11 +22,12 @@ public sealed class GradeDefinition
         Name = string.Empty;
     }
 
-    internal GradeDefinition(Guid id, string name, int minMark, int maxMark, decimal points)
+    internal GradeDefinition(Guid id, Guid gradeScaleId, string name, int minMark, int maxMark, decimal points)
     {
         Validate(name, minMark, maxMark, points);
 
         Id = id;
+        GradeScaleId = gradeScaleId;
         Name = name.Trim();
         MinMark = minMark;
         MaxMark = maxMark;
@@ -32,7 +35,7 @@ public sealed class GradeDefinition
     }
 
     public GradeDefinition(string name, int minMark, int maxMark, decimal points)
-        : this(Guid.NewGuid(), name, minMark, maxMark, points)
+        : this(Guid.NewGuid(), Guid.Empty, name, minMark, maxMark, points)
     {
     }
 
