@@ -8,6 +8,7 @@ using GPAHub.Application.Services;
 using GPAHub.Application.Validators;
 using GPAHub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace GPAHub.Tests.UnitTests.Services;
@@ -29,7 +30,8 @@ public class AuthServiceTests
             _tokens.Object,
             _hasher,
             new RegisterStudentDtoValidator(),
-            new LoginRequestDtoValidator());
+            new LoginRequestDtoValidator(),
+            NullLogger<AuthService>.Instance);
 
         _tokens.Setup(t => t.GenerateToken(It.IsAny<Student>())).Returns("jwt-token");
     }
@@ -140,3 +142,4 @@ public class AuthServiceTests
     private void SetupStudent(Student student) =>
         _repo.Setup(r => r.GetByEmailAsync(student.Email, It.IsAny<CancellationToken>())).ReturnsAsync(student);
 }
+

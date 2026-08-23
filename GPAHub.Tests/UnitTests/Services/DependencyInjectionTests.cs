@@ -3,6 +3,7 @@ using GPAHub.Application.Interfaces.Repositories;
 using GPAHub.Application.Interfaces.Services;
 using GPAHub.Tests.IntegrationTests;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace GPAHub.Tests.UnitTests.Services;
@@ -13,6 +14,7 @@ public class DependencyInjectionTests
     public void AddApplication_RegistersAllServices()
     {
         var services = new ServiceCollection();
+        services.AddLogging();
 
         services.AddScoped(_ => Mock.Of<IStudentRepository>());
         services.AddScoped(_ => Mock.Of<ICourseRepository>());
@@ -40,3 +42,4 @@ public class DependencyInjectionTests
         Assert.NotNull(provider.GetRequiredService<IAuthService>());
     }
 }
+

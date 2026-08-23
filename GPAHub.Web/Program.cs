@@ -8,9 +8,11 @@ using GPAHub.Web.Auth;
 using GPAHub.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,21 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Premium", policy =>
         policy.RequireAuthenticatedUser().AddRequirements(new PremiumRequirement()));
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("auth", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
 });
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
@@ -101,12 +118,21 @@ await using (var scope = app.Services.CreateAsyncScope())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+    app.UseHttpsRedirection();
+}
+
+app.UseRateLimiter();
 
 app.UseCors();
 app.UseAuthentication();

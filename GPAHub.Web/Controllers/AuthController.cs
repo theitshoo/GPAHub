@@ -2,9 +2,11 @@ using GPAHub.Application.DTOs.Student;
 using GPAHub.Application.Interfaces.Services;
 using GPAHub.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace GPAHub.Web.Controllers;
 
+[EnableRateLimiting("auth")]
 [Route("api/auth")]
 public class AuthController : ApiControllerBase
 {
