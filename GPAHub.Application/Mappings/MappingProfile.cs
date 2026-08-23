@@ -2,6 +2,7 @@ using AutoMapper;
 using GPAHub.Application.DTOs.Course;
 using GPAHub.Application.DTOs.GradeScale;
 using GPAHub.Application.DTOs.History;
+using GPAHub.Application.DTOs.Student;
 using GPAHub.Application.DTOs.Subscription;
 using GPAHub.Domain.Entities;
 
@@ -13,6 +14,9 @@ public class MappingProfile : Profile
 
     public MappingProfile()
     {
+        CreateMap<GPAHub.Domain.ValueObjects.CreditHours, decimal>()
+            .ConvertUsing(value => value.Value);
+
         CreateMap<GradeDefinition, GradeDefinitionItemDto>()
             .MaxDepth(MaxMappingDepth);
 
@@ -20,6 +24,10 @@ public class MappingProfile : Profile
             .MaxDepth(MaxMappingDepth);
 
         CreateMap<Course, CourseDto>()
+            .ForMember(d => d.CreditHours, o => o.MapFrom(s => s.CreditHours.Value))
+            .MaxDepth(MaxMappingDepth);
+
+        CreateMap<Student, StudentProfileDto>()
             .MaxDepth(MaxMappingDepth);
 
         CreateMap<GpaRecordCourseLine, GpaRecordLineDto>()
