@@ -36,5 +36,7 @@ public class DependencyInjectionTests
         Assert.NotNull(provider.GetRequiredService<ISubscriptionService>());
         Assert.NotNull(provider.GetRequiredService<IHistoryService>());
         Assert.NotNull(provider.GetRequiredService<IReportService>());
+        Assert.NotNull(provider.GetRequiredService<ISemesterService>());
+        Assert.NotNull(provider.GetRequiredService<IAuthService>());
     }
 }

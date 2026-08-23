@@ -27,6 +27,9 @@ public class MappingProfile : Profile
             .ForMember(d => d.CreditHours, o => o.MapFrom(s => s.CreditHours.Value))
             .MaxDepth(MaxMappingDepth);
 
+        CreateMap<Semester, SemesterOptionDto>()
+            .MaxDepth(MaxMappingDepth);
+
         CreateMap<Student, StudentProfileDto>()
             .MaxDepth(MaxMappingDepth);
 

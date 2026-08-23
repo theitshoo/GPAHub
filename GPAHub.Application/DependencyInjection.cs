@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<IHistoryService, HistoryService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<ISemesterService, SemesterService>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPasswordHasher<Student>, PasswordHasher<Student>>();
@@ -30,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<UpdateGradeScaleDtoValidator>();
         services.AddScoped<SaveGradeDefinitionDtoValidator>();
         services.AddScoped<CourseInputDtoValidator>();
+        services.AddScoped<CreateSemesterDtoValidator>();
         services.AddScoped<CalculateGpaRequestDtoValidator>();
         services.AddScoped<TargetPredictionRequestDtoValidator>();
         services.AddScoped<UpdateProfileDtoValidator>();
