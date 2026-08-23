@@ -1,4 +1,4 @@
-# GPAHub — Architecture
+# GPAHub - Architecture
 
 Clean Architecture with four production projects plus a test project. The single rule that governs everything: **dependencies point inward, and the Domain depends on nothing.**
 
@@ -36,10 +36,10 @@ Domain rule violations throw `DomainException`, which services translate via `Do
 ### 2. Aggregate-protected invariants
 Cross-entity rules live on aggregates, not services:
 
-- `GradeScale.AddDefinition / UpdateDefinition / RemoveDefinition` eagerly enforce name uniqueness and range overlap — the collection can never hold an invalid pairwise state.
+- `GradeScale.AddDefinition / UpdateDefinition / RemoveDefinition` eagerly enforce name uniqueness and range overlap - the collection can never hold an invalid pairwise state.
 - Whole-collection properties (full coverage, non-empty) are checked by `GradeScale.EnsureValid()`, which Application must call before activation or save of an active scale.
 - `Payment` state transitions are terminal-only; creation goes through the owning aggregate or an explicit factory.
-- `Course` input-type exclusivity is enforced by API shape (`CreateNumeric/CreateLetterGrade/UpdateAsNumeric/UpdateAsLetter`) — both/neither is unrepresentable.
+- `Course` input-type exclusivity is enforced by API shape (`CreateNumeric/CreateLetterGrade/UpdateAsNumeric/UpdateAsLetter`) - both/neither is unrepresentable.
 
 ### 3. Pure domain engines
 All GPA math lives as static, side-effect-free functions over immutable input records:
@@ -61,7 +61,7 @@ custom definitions in request  →  owned scale by id  →  student's active sca
 
 Guests can only reach custom/system-default branches; `scaleId` without authentication is rejected.
 
-### 5. Premium gating — defense in depth (DR-012)
+### 5. Premium gating - defense in depth (DR-012)
 1. **Service gate:** `TargetGpaService` consults `ISubscriptionService.IsPremiumAsync(studentId)` before combination generation; unauthorized callers receive `Error.Forbidden("premium_required")`.
 2. **Endpoint policy:** the `Premium` authorization requirement evaluates live subscription state per request (never a stale token claim).
 
