@@ -14,7 +14,7 @@ GPAHub gives students (and anonymous guests) a single, secure API to:
 
 - Define **custom grading scales** or use the seeded system default.
 - Calculate **semester GPA** and **cumulative GPA** against an academic baseline.
-- Run **target-GPA predictions** — required average across upcoming courses, feasibility vs. the scale's maximum, and the maximum reachable GPA when the target is out of reach.
+- Run **target-GPA predictions** - required average across upcoming courses, feasibility vs. the scale's maximum, and the maximum reachable GPA when the target is out of reach.
 - Generate **grade combinations** (Premium) that satisfy a target, ordered closest-to-target first.
 - Persist calculations and plans to **history**, and export them as JSON or **PDF reports**.
 
@@ -167,12 +167,12 @@ See [docs/architecture.md](docs/architecture.md) for layer rules and request flo
 
 Protected endpoints require a JWT Bearer token. Typical client flow:
 
-1. **Register** — `POST /api/auth/register` creates the account and returns the initial token pair.
-2. **Login** — `POST /api/auth/login` returns `{ accessToken, refreshToken }`.
-3. **Authorize requests** — send `Authorization: Bearer <accessToken>` on protected routes.
-4. **Refresh** — `POST /api/auth/refresh` rotates the pair; the old refresh token becomes invalid.
-5. **Reuse detection** — presenting an already-used refresh token revokes *all* sessions for that account.
-6. **Logout** — `POST /api/auth/logout` revokes the presented refresh token (idempotent).
+1. **Register** - `POST /api/auth/register` creates the account and returns the initial token pair.
+2. **Login** - `POST /api/auth/login` returns `{ accessToken, refreshToken }`.
+3. **Authorize requests** - send `Authorization: Bearer <accessToken>` on protected routes.
+4. **Refresh** - `POST /api/auth/refresh` rotates the pair; the old refresh token becomes invalid.
+5. **Reuse detection** - presenting an already-used refresh token revokes *all* sessions for that account.
+6. **Logout** - `POST /api/auth/logout` revokes the presented refresh token (idempotent).
 
 Refresh tokens are opaque random values stored server-side as SHA-256 hashes; they never appear in logs or responses after issuance.
 
