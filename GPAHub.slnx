@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="GPAHub.Application/GPAHub.Application.csproj" />
+  <Project Path="GPAHub.Domain/GPAHub.Domain.csproj" />
+  <Project Path="GPAHub.Infrastructure/GPAHub.Infrastructure.csproj" />
+  <Project Path="GPAHub.Tests/GPAHub.Tests.csproj" />
+  <Project Path="GPAHub.Web/GPAHub.Web.csproj" />
+</Solution>
