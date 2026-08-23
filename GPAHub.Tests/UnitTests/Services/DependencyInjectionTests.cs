@@ -1,6 +1,7 @@
 using GPAHub.Application;
 using GPAHub.Application.Interfaces.Repositories;
 using GPAHub.Application.Interfaces.Services;
+using GPAHub.Tests.IntegrationTests;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
@@ -21,6 +22,7 @@ public class DependencyInjectionTests
         services.AddScoped(_ => Mock.Of<IGpaRecordRepository>());
         services.AddScoped(_ => Mock.Of<ITargetPlanRepository>());
         services.AddScoped(_ => Mock.Of<IUnitOfWork>());
+        services.AddScoped(_ => Mock.Of<ITokenService>());
 
         services.AddApplication();
 
