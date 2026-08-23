@@ -109,12 +109,7 @@ GPAHub/
 │   ├── architecture.md
 │   ├── database-erd.md
 │   ├── folder-hierarchy.md
-│   ├── DEPLOYMENT.md
-│   ├── DECISIONS.md
-│   ├── FINAL_AUDIT.md
-│   ├── IMPLEMENTATION_STATUS.md
-│   └── REQUIREMENTS_TRACEABILITY.md
-├── ai-handsoff/                     # Original specification documents
+│   └── Deployment.md
 └── src projects:
     ├── GPAHub.Domain/               # Entities, value objects, domain engines — no dependencies
     ├── GPAHub.Application/          # Use cases, DTOs, validators, ports, premium gating
@@ -366,11 +361,7 @@ TDD was used throughout development (tests written before implementation), and e
 | [Architecture](docs/architecture.md) | Layers, dependency rules, request flow, key patterns |
 | [Database ERD](docs/database-erd.md) | Entity-relationship diagram and constraint catalog |
 | [Folder hierarchy](docs/folder-hierarchy.md) | Complete solution layout |
-| [Deployment guide](docs/DEPLOYMENT.md) | Docker Compose setup, secrets, Stripe walkthrough |
-| [Decision records](docs/DECISIONS.md) | All architecture/engineering decisions (DR-001…DR-025) |
-| [Implementation status](docs/IMPLEMENTATION_STATUS.md) | Phase ledger and verification log |
-| [Requirements traceability](docs/REQUIREMENTS_TRACEABILITY.md) | Requirement → component → test mapping |
-| [Final audit](docs/FINAL_AUDIT.md) | End-of-project audit and gap report |
+| [Deployment guide](docs/Deployment.md) | Docker Compose setup, secrets, Stripe walkthrough |
 
 **Interactive docs (Development):** Swagger UI at `/swagger`.
 

@@ -16,17 +16,7 @@ GPAHub/
 │   ├── architecture.md                  # Layers, dependency rules, request pipeline
 │   ├── database-erd.md                  # ERD + indexes/constraints catalog
 │   ├── folder-hierarchy.md              # This file
-│   ├── DEPLOYMENT.md                    # Docker Compose production guide
-│   ├── DECISIONS.md                     # Decision records DR-001…DR-025
-│   ├── FINAL_AUDIT.md                   # End-of-project audit + gap report
-│   ├── IMPLEMENTATION_STATUS.md         # Phase ledger & verification log
-│   └── REQUIREMENTS_TRACEABILITY.md     # Requirement → component → test map
-│
-├── ai-handsoff/                         # Original specification documents (source of truth)
-│   ├── Folder Structure.md
-│   ├── Narrative Workflow.md
-│   ├── Rules.md
-│   └── System Specification.md
+│   └── Deployment.md                    # Docker Compose production guide
 │
 ├── GPAHub.Domain/                       # ◆ Zero dependencies — pure business core
 │   ├── Constants/

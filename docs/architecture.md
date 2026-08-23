@@ -98,7 +98,7 @@ Startup composition (`Program.cs`) applies migrations, seeds reference data, the
 
 ## Cross-Cutting Decisions
 
-Full rationale lives in [DECISIONS.md](DECISIONS.md). Highlights:
+Key decisions and their rationale:
 
 | ID | Topic |
 |----|-------|
