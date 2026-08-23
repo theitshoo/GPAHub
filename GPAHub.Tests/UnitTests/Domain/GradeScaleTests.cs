@@ -242,4 +242,24 @@ public class GradeScaleTests
 
         Assert.False(scale.IsActive);
     }
+
+    [Fact]
+    public void UpdateDetails_ChangesNameDescriptionAndFlag()
+    {
+        var scale = CreateScale();
+
+        scale.UpdateDetails("Renamed", "new desc", enforceFullCoverage: true);
+
+        Assert.Equal("Renamed", scale.Name);
+        Assert.Equal("new desc", scale.Description);
+        Assert.True(scale.EnforceFullCoverage);
+    }
+
+    [Fact]
+    public void UpdateDetails_WithEmptyName_Throws()
+    {
+        var scale = CreateScale();
+
+        Assert.Throws<DomainException>(() => scale.UpdateDetails(" ", null, false));
+    }
 }

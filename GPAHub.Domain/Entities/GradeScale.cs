@@ -75,6 +75,18 @@ public sealed class GradeScale
 
     public void Deactivate() => IsActive = false;
 
+    public void UpdateDetails(string name, string? description, bool enforceFullCoverage)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException("Grade scale name is required.");
+        }
+
+        Name = name.Trim();
+        Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim();
+        EnforceFullCoverage = enforceFullCoverage;
+    }
+
     public GradeDefinition? FindDefinitionForMark(int mark) =>
         _definitions.FirstOrDefault(d => mark >= d.MinMark && mark <= d.MaxMark);
 
