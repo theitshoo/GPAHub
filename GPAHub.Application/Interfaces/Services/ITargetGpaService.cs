@@ -5,7 +5,7 @@ namespace GPAHub.Application.Interfaces.Services;
 
 public interface ITargetGpaService
 {
-    Task<Result<TargetPredictionResponseDto>> PredictAsync(TargetPredictionRequestDto request, CancellationToken cancellationToken = default);
+    Task<Result<TargetPredictionResponseDto>> PredictAsync(TargetPredictionRequestDto request, Guid? studentId = null, CancellationToken cancellationToken = default);
 
     Task<Result<TargetPredictionResponseDto>> PredictAndSaveAsync(Guid studentId, TargetPredictionRequestDto request, CancellationToken cancellationToken = default);
 }
