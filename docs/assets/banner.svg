@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="200" viewBox="0 0 1000 200">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#4ade80"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="200" rx="12" fill="url(#g)"/>
+
+  <text x="40" y="78" font-family="Segoe UI, Roboto, Arial" font-size="40" fill="#ffffff" font-weight="700">
+    GPAHub
+  </text>
+
+  <text x="40" y="116" font-family="Segoe UI, Roboto, Arial" font-size="17" fill="#cbd5e1">
+    Your Academic Performance, All in One Place.
+  </text>
+
+  <text x="40" y="150" font-family="Segoe UI, Roboto, Arial" font-size="13" fill="#64748b">
+    GPA Calculation · Target Planning · Premium Analytics · Stripe Billing
+  </text>
+
+  <rect x="40" y="164" width="220" height="3" rx="1.5" fill="url(#accent)"/>
+
+  <g transform="translate(800,40)">
+    <text x="60" y="62" text-anchor="middle" font-family="Segoe UI, Roboto, Arial" font-size="30" fill="#ffffff" font-weight="700">
+      Hesham Salah
+    </text>
+
+    <text x="60" y="96" text-anchor="middle" font-family="Segoe UI, Roboto, Arial" font-size="16" fill="#cbd5e1">
+      Portfolio Project
+    </text>
+
+    <text x="60" y="126" text-anchor="middle" font-family="Segoe UI, Roboto, Arial" font-size="14" fill="#38bdf8">
+      .NET 10 · Clean Architecture
+    </text>
+  </g>
+</svg>
