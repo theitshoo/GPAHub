@@ -1,10 +1,8 @@
-# GPAHub — Database ERD
+# Database ERD
 
-Target: SQL Server · EF Core 10 code-first · migrations in `GPAHub.Infrastructure/Persistence/Migrations/`.
+SQL Server · EF Core 10 code-first · migrations in `GPAHub.Infrastructure/Persistence/Migrations/`.
 
----
-
-## Entity-Relationship Diagram
+## Entity-relationship diagram
 
 ```mermaid
 erDiagram
@@ -12,185 +10,174 @@ erDiagram
     STUDENTS ||--o{ COURSES : owns
     STUDENTS ||--o{ GRADESCALES : owns
     STUDENTS ||--o{ SUBSCRIPTIONS : has
-    STUDENTS ||--o| REFRESHTOKENS : "sessions (1..n)"
     STUDENTS ||--o{ GPARECORDS : saves
     STUDENTS ||--o{ TARGETPLANS : saves
-
+    STUDENTS ||--o{ REFRESHTOKENS : sessions
     GRADESCALES ||--|{ GRADEDEFINITIONS : contains
     SUBSCRIPTIONS ||--o{ PAYMENTS : "paid by"
-    COURSES }o--o| SEMESTERS : "grouped in (SET NULL via app detach)"
-    GPARECORDS ||--|{ GPARECORDCROURLINES : snapshots
+    COURSES }o--o| SEMESTERS : grouped_in
+    GPARECORDS ||--|{ GPARECORDCOURSELINES : snapshots
     TARGETPLANS ||--|{ TARGETPLANUPCOMINGCOURSES : lists
-    PLANS ||..o{ PAYMENTS : "reference data"
 
     STUDENTS {
-        uniqueidentifier Id PK
-        nvarchar Name
-        nvarchar Email UK
-        nvarchar PasswordHash NULL
-        decimal CurrentGpa NULL
-        decimal CompletedCreditHours NULL
-        rowversion Version
+        uuid Id PK
+        string Name
+        string Email UK
+        string PasswordHash
+        decimal CurrentGpa
+        decimal CompletedCreditHours
     }
     GRADESCALES {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK "NULL = system default"
-        nvarchar Name
-        bit IsActive
-        bit EnforceFullCoverage
-        rowversion Version
+        uuid Id PK
+        uuid StudentId FK "null = system default"
+        string Name
+        bool IsActive
+        bool EnforceFullCoverage
     }
     GRADEDEFINITIONS {
-        uniqueidentifier Id PK
-        uniqueidentifier GradeScaleId FK
-        nvarchar Name
+        uuid Id PK
+        uuid GradeScaleId FK
+        string Name
         int MinMark
         int MaxMark
         decimal Points
-        rowversion Version
     }
     SEMESTERS {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK
-        nvarchar Name
-        rowversion Version
+        uuid Id PK
+        uuid StudentId FK
+        string Name
     }
     COURSES {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK
-        uniqueidentifier SemesterId FK "NULL allowed"
-        nvarchar Name
-        nvarchar Code NULL
-        decimal CreditHours "> 0"
+        uuid Id PK
+        uuid StudentId FK
+        uuid SemesterId FK
+        string Name
+        string Code
+        decimal CreditHours
         int InputType
-        int NumericMark NULL
-        nvarchar LetterGrade NULL
-        rowversion Version
+        int NumericMark
+        string LetterGrade
     }
     SUBSCRIPTIONS {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK
-        int Type "Free=1 Premium=2"
-        int Status "Active=1 Expired=2"
+        uuid Id PK
+        uuid StudentId FK
+        int Type
+        int Status
         datetimeoffset StartDate
-        datetimeoffset EndDate NULL "lifetime"
-        rowversion Version
+        datetimeoffset EndDate
     }
     PAYMENTS {
-        uniqueidentifier Id PK
-        uniqueidentifier SubscriptionId FK "NULL until activated"
-        decimal Amount ">= 0"
-        char Currency "3"
-        int Status "Pending/Completed/Failed"
-        nvarchar ExternalReference UK "idempotency key"
+        uuid Id PK
+        uuid SubscriptionId FK
+        decimal Amount
+        string Currency
+        int Status
+        string ExternalReference UK
         datetimeoffset OccurredAtUtc
-        rowversion Version
     }
     PLANS {
-        uniqueidentifier Id PK
-        nvarchar Name UK
-        nvarchar Features ";-joined flags"
+        uuid Id PK
+        string Name UK
+        string Features
     }
     GPARECORDS {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK
+        uuid Id PK
+        uuid StudentId FK
         int CalculationType
         decimal SemesterGpa
-        decimal CumulativeGpa NULL
+        decimal CumulativeGpa
         decimal TotalCreditHours
         decimal TotalQualityPoints
         datetimeoffset CreatedAtUtc
     }
-    GPARECORDCROURLINES {
-        uniqueidentifier Id PK
-        uniqueidentifier GpaRecordId FK
-        nvarchar CourseName
-        nvarchar CourseCode NULL
+    GPARECORDCOURSELINES {
+        uuid Id PK
+        uuid GpaRecordId FK
+        string CourseName
+        string CourseCode
         decimal CreditHours
-        nvarchar GradeName
+        string GradeName
         decimal GpaPoints
-        decimal QualityPoints "computed"
+        decimal QualityPoints
     }
     TARGETPLANS {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK
+        uuid Id PK
+        uuid StudentId FK
         decimal TargetGpa
         decimal CurrentGpa
         decimal CompletedCreditHours
         decimal RequiredAverageGpa
-        bit IsAchievable
-        decimal MaxReachableGpa NULL
+        bool IsAchievable
+        decimal MaxReachableGpa
         datetimeoffset CreatedAtUtc
     }
     TARGETPLANUPCOMINGCOURSES {
-        uniqueidentifier Id PK
-        uniqueidentifier TargetPlanId FK
-        nvarchar Name
+        uuid Id PK
+        uuid TargetPlanId FK
+        string Name
         decimal CreditHours
     }
     REFRESHTOKENS {
-        uniqueidentifier Id PK
-        uniqueidentifier StudentId FK
-        nvarchar TokenHash UK "SHA-256"
+        uuid Id PK
+        uuid StudentId FK
+        string TokenHash UK
         datetimeoffset CreatedAtUtc
         datetimeoffset ExpiresAtUtc
-        datetimeoffset RevokedAtUtc NULL
+        datetimeoffset RevokedAtUtc
     }
 ```
 
----
+## Column conventions
 
-## Relationships & Delete Behavior
+- All GPA / hours / points columns: `decimal(18,6)` (credit hours `(5,2)`, money `(18,2)`).
+- Every mutable table carries a `rowversion Version` column for optimistic concurrency.
+- Insert-only snapshot tables (`GpaRecordCourseLines`, `TargetPlanUpcomingCourses`) are never updated after creation.
 
-| Relationship | Cardinality | On delete | Notes |
-|--------------|-------------|-----------|-------|
-| Student → Semester | 1 : 0..* | **Cascade** | |
-| Student → Course | 1 : 0..* | **Cascade** | |
-| Student → GradeScale | 1 : 0..* (+ system defaults with NULL) | Cascade (owned rows only) | |
-| GradeScale → GradeDefinition | 1 : 0..* | **Cascade** | |
-| Student → Semester → Course | indirect path | **NoAction on Course.SemesterId** | Avoids SQL Server multiple-cascade-path error; service detaches explicitly (DR-014) |
-| Student → Subscription | 1 : 0..* | Cascade | |
-| Subscription → Payment | 1 : 0..* | Cascade | `SubscriptionId` nullable: pre-payment records exist without a subscription |
-| Student → GpaRecord / TargetPlan | 1 : 0..* | Cascade | Child snapshot lines cascade with parents |
-| Student → RefreshToken | 1 : 0..* | Cascade | |
+## Relationship summary
 
-## Indexes
+| From | To | Cardinality | Delete behavior |
+|------|----|-------------|-----------------|
+| Semester → Student | Many → One | Required | Cascade |
+| Course → Student | Many → One | Required | Cascade |
+| GradeScale → Student | Many → One | Optional | Cascade |
+| GradeDefinition → GradeScale | Many → One | Required | Cascade |
+| Subscription → Student | Many → One | Required | Cascade |
+| Payment → Subscription | Many → One | Optional | Cascade |
+| Payment → Student | indirect | — | via subscription cascade |
+| RefreshToken → Student | Many → One | Required | Cascade |
+| Course → Semester | Many → One | Optional | **NoAction** — service detaches explicitly before delete (DR-014) |
+| GpaRecord → Student | Many → One | Required | Cascade |
+| GpaRecordCourseLine → GpaRecord | Many → One | Required | Cascade |
+| TargetPlan → Student | Many → One | Required | Cascade |
+| TargetPlanUpcomingCourse → TargetPlan | Many → One | Required | Cascade |
 
-| Table | Index | Purpose |
-|-------|-------|---------|
-| Students | UNIQUE `Email` | Account identity |
-| GradeScales | UNIQUE `(StudentId, Name)` WHERE `StudentId IS NOT NULL` | Scale-name uniqueness per student (system defaults exempt) |
-| GradeScales | UNIQUE `StudentId` WHERE `[IsActive] = 1 AND [StudentId] IS NOT NULL` | **One active scale per student**, enforced by the database even if a future bug tries to bypass it |
-| GradeScales | `StudentId` filtered `IS NOT NULL` | Active-scale lookup |
-| GradeDefinitions | `(GradeScaleId, Name)` UNIQUE | No duplicate grade names inside a scale |
-| Courses | `StudentId`, `SemesterId` | Ownership + semester filtering |
-| Semesters | `StudentId` | Ownership scans |
-| Subscriptions | `StudentId` | Latest-subscription lookup |
-| Payments | `ExternalReference` UNIQUE | Webhook idempotency |
-| GpaRecords / TargetPlans | `(StudentId, CreatedAtUtc)` | Paged history queries |
+## Indexes of note
 
-## Check Constraints
+- Unique **Email** on Students.
+- Unique filtered index `(StudentId, Name)` on GradeScales — scale-name uniqueness per student.
+- Unique filtered index `StudentId WHERE IsActive = 1 AND StudentId IS NOT NULL` on GradeScales — guarantees exactly one active scale per student at the database level.
+- Unique `(GradeScaleId, Name)` on GradeDefinitions.
+- Unique **ExternalReference** on Payments — webhook idempotency.
+- Composite `(StudentId, CreatedAtUtc)` on GpaRecords and TargetPlans — paged history queries.
+- `StudentId` / `SemesterId` FK indexes on Courses.
+
+## Check constraints
 
 | Constraint | Rule |
 |------------|------|
-| `CK_GradeDefinitions_MarkRange` | `MinMark <= MaxMark AND MinMark >= 0 AND MaxMark <= 100` |
-| `CK_GradeDefinitions_Points` | `Points >= 0` |
-| `CK_Courses_CreditHours` | `CreditHours > 0` |
-| `CK_Courses_MarkRange` | `NumericMark IS NULL OR (NumericMark BETWEEN 0 AND 100)` |
-| `CK_Payments_Amount` | `Amount >= 0` |
-| `CK_Subscriptions_DateRange` | `EndDate IS NULL OR EndDate >= StartDate` |
+| CK_GradeDefinitions_MarkRange | `MinMark <= MaxMark AND MinMark >= 0 AND MaxMark <= 100` |
+| CK_GradeDefinitions_Points | `Points >= 0` |
+| CK_Courses_CreditHours | `CreditHours > 0` |
+| CK_Courses_MarkRange | `NumericMark IS NULL OR (0–100)` |
+| CK_Payments_Amount | `Amount >= 0` |
+| CK_Subscriptions_DateRange | `EndDate IS NULL OR EndDate >= StartDate` |
 
-## Concurrency & Precision
+## Enums (stored as int)
 
-- Every mutable table carries a shadow `rowversion Version` column. Concurrent updates raise `DbUpdateConcurrencyException`, mapped by middleware to **HTTP 409 `concurrency_conflict`**.
-- All GPA/hours/points columns use `decimal(18,6)`; credit hours use `(5,2)`; money uses `(18,2)` — full internal precision is preserved and rounding happens only at the API edge (`MidpointRounding.AwayFromZero`, DR-009).
-- Insert-only tables (`GpaRecords`, `TargetPlans` children) are never updated after creation; history is append-only.
-
-## Migrations
-
-```bash
-dotnet ef migrations add <Name> --project GPAHub.Infrastructure --output-dir Persistence/Migrations
-dotnet ef database update --project GPAHub.Infrastructure
-```
-
-Applied automatically at application startup. Current set: `InitialCreate`, `ProductionHardening`.
+| Enum | Values |
+|------|--------|
+| `GradeInputType` | NumericMark, LetterGrade |
+| `SubscriptionType` | Free, Premium |
+| `SubscriptionStatus` | Active, Expired |
+| `PaymentStatus` | Pending, Completed, Failed |
+| `CalculationType` | Gpa, TargetPrediction |
