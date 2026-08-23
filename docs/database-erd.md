@@ -145,7 +145,7 @@ erDiagram
 | Payment → Subscription | Many → One | Optional | Cascade |
 | Payment → Student | indirect | — | via subscription cascade |
 | RefreshToken → Student | Many → One | Required | Cascade |
-| Course → Semester | Many → One | Optional | **NoAction** — service detaches explicitly before delete (DR-014) |
+| Course → Semester | Many → One | Optional | **NoAction** - service detaches explicitly before delete (DR-014) |
 | GpaRecord → Student | Many → One | Required | Cascade |
 | GpaRecordCourseLine → GpaRecord | Many → One | Required | Cascade |
 | TargetPlan → Student | Many → One | Required | Cascade |
@@ -154,11 +154,11 @@ erDiagram
 ## Indexes of note
 
 - Unique **Email** on Students.
-- Unique filtered index `(StudentId, Name)` on GradeScales — scale-name uniqueness per student.
-- Unique filtered index `StudentId WHERE IsActive = 1 AND StudentId IS NOT NULL` on GradeScales — guarantees exactly one active scale per student at the database level.
+- Unique filtered index `(StudentId, Name)` on GradeScales - scale-name uniqueness per student.
+- Unique filtered index `StudentId WHERE IsActive = 1 AND StudentId IS NOT NULL` on GradeScales - guarantees exactly one active scale per student at the database level.
 - Unique `(GradeScaleId, Name)` on GradeDefinitions.
-- Unique **ExternalReference** on Payments — webhook idempotency.
-- Composite `(StudentId, CreatedAtUtc)` on GpaRecords and TargetPlans — paged history queries.
+- Unique **ExternalReference** on Payments - webhook idempotency.
+- Composite `(StudentId, CreatedAtUtc)` on GpaRecords and TargetPlans - paged history queries.
 - `StudentId` / `SemesterId` FK indexes on Courses.
 
 ## Check constraints
