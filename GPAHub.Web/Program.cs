@@ -39,6 +39,12 @@ builder.Services
         var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
             ?? throw new InvalidOperationException("Jwt configuration section is missing.");
 
+        if (string.IsNullOrWhiteSpace(jwt.SecretKey) || jwt.SecretKey.Length < 32)
+        {
+            throw new InvalidOperationException(
+                "Jwt:SecretKey must be configured (at least 32 characters). Provide it via user secrets or environment variables.");
+        }
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
