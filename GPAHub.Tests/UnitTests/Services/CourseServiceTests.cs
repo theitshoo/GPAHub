@@ -14,13 +14,14 @@ namespace GPAHub.Tests.UnitTests.Services;
 public class CourseServiceTests
 {
     private readonly Mock<ICourseRepository> _repo = new();
+    private readonly Mock<ISemesterRepository> _semesterRepo = new();
     private readonly Mock<IUnitOfWork> _uow = new();
     private readonly CourseService _service;
 
     public CourseServiceTests()
     {
         var mapper = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()).CreateMapper();
-        _service = new CourseService(_repo.Object, _uow.Object, mapper, new CourseInputDtoValidator());
+        _service = new CourseService(_repo.Object, _semesterRepo.Object, _uow.Object, mapper, new CourseInputDtoValidator());
     }
 
     [Fact]

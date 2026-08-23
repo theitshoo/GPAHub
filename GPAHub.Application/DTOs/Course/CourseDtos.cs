@@ -19,6 +19,7 @@ public sealed record CourseInputDto(
     decimal CreditHours,
     GradeInputType InputType,
     int? NumericMark,
-    string? LetterGrade);
+    string? LetterGrade,
+    Guid? SemesterId = null);
 
 public sealed record SemesterOptionDto(Guid Id, string Name);

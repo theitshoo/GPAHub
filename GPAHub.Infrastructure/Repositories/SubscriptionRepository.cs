@@ -18,6 +18,7 @@ public class SubscriptionRepository : ISubscriptionRepository
             .Include(s => s.Payments)
             .Where(s => s.StudentId == studentId)
             .OrderByDescending(s => s.StartDate)
+            .ThenByDescending(s => s.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
     public async Task AddAsync(Subscription subscription, CancellationToken cancellationToken = default) =>

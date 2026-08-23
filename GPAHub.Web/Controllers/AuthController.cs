@@ -30,4 +30,14 @@ public class AuthController : ApiControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto dto, CancellationToken cancellationToken) =>
         FromResult(await _authService.LoginAsync(dto, cancellationToken));
+
+    [HttpPost("refresh")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<AuthResponseDto>> Refresh(RefreshRequestDto dto, CancellationToken cancellationToken) =>
+        FromResult(await _authService.RefreshAsync(dto, cancellationToken));
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(LogoutRequestDto dto, CancellationToken cancellationToken) =>
+        FromResult(await _authService.LogoutAsync(dto, cancellationToken));
 }

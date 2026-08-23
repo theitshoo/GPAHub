@@ -18,6 +18,7 @@ public class AuthServiceTests
     private readonly Mock<IStudentRepository> _repo = new();
     private readonly Mock<IUnitOfWork> _uow = new();
     private readonly Mock<ITokenService> _tokens = new();
+    private readonly Mock<IRefreshTokenRepository> _refreshTokens = new();
     private readonly AuthService _service;
     private readonly IPasswordHasher<Student> _hasher = new PasswordHasher<Student>();
 
@@ -26,6 +27,7 @@ public class AuthServiceTests
         var mapper = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()).CreateMapper();
         _service = new AuthService(
             _repo.Object,
+            _refreshTokens.Object,
             _uow.Object,
             _tokens.Object,
             _hasher,
@@ -142,4 +144,5 @@ public class AuthServiceTests
     private void SetupStudent(Student student) =>
         _repo.Setup(r => r.GetByEmailAsync(student.Email, It.IsAny<CancellationToken>())).ReturnsAsync(student);
 }
+
 

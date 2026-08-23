@@ -29,6 +29,8 @@ public class GpaHubDbContext : DbContext
 
     public DbSet<TargetPlan> TargetPlans => Set<TargetPlan>();
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(GpaHubDbContext).Assembly);

@@ -28,6 +28,12 @@ public class CourseRepository : ICourseRepository
         return await query.OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Course>> ListBySemesterTrackedAsync(Guid studentId, Guid semesterId, CancellationToken cancellationToken = default) =>
+        await _context.Courses
+            .Where(c => c.StudentId == studentId && c.SemesterId == semesterId)
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
+
     public async Task AddAsync(Course course, CancellationToken cancellationToken = default) =>
         await _context.Courses.AddAsync(course, cancellationToken);
 

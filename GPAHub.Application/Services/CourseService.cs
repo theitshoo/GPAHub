@@ -15,13 +15,15 @@ namespace GPAHub.Application.Services;
 public class CourseService : ICourseService
 {
     private readonly ICourseRepository _repository;
+    private readonly ISemesterRepository _semesterRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly CourseInputDtoValidator _validator;
 
-    public CourseService(ICourseRepository repository, IUnitOfWork unitOfWork, IMapper mapper, CourseInputDtoValidator validator)
+    public CourseService(ICourseRepository repository, ISemesterRepository semesterRepository, IUnitOfWork unitOfWork, IMapper mapper, CourseInputDtoValidator validator)
     {
         _repository = repository;
+        _semesterRepository = semesterRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _validator = validator;
@@ -37,7 +39,18 @@ public class CourseService : ICourseService
 
         try
         {
+            if (dto.SemesterId.HasValue &&
+                await RequireSemesterAsync(studentId, dto.SemesterId.Value, cancellationToken) is null)
+            {
+                return Result<CourseDto>.Fail(SemesterNotFound());
+            }
+
             var course = BuildCourse(studentId, dto);
+
+            if (dto.SemesterId.HasValue)
+            {
+                course.AssignToSemester(dto.SemesterId.Value);
+            }
 
             await _repository.AddAsync(course, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -66,6 +79,12 @@ public class CourseService : ICourseService
 
         try
         {
+            if (dto.SemesterId.HasValue &&
+                await RequireSemesterAsync(studentId, dto.SemesterId.Value, cancellationToken) is null)
+            {
+                return Result<CourseDto>.Fail(SemesterNotFound());
+            }
+
             course.UpdateDetails(dto.Name, dto.Code, dto.CreditHours);
 
             if (dto.InputType == GradeInputType.NumericMark)
@@ -75,6 +94,16 @@ public class CourseService : ICourseService
             else
             {
                 course.UpdateAsLetter(dto.LetterGrade!);
+            }
+
+            if (dto.SemesterId.HasValue)
+            {
+                await RequireSemesterAsync(studentId, dto.SemesterId.Value, cancellationToken);
+                course.AssignToSemester(dto.SemesterId.Value);
+            }
+            else
+            {
+                course.RemoveFromSemester();
             }
         }
         catch (DomainException exception)
@@ -119,8 +148,14 @@ public class CourseService : ICourseService
         return Result<IReadOnlyList<CourseDto>>.Ok(_mapper.Map<List<CourseDto>>(courses));
     }
 
+    private async Task<Semester?> RequireSemesterAsync(Guid studentId, Guid semesterId, CancellationToken cancellationToken) =>
+        await _semesterRepository.GetByIdForStudentAsync(semesterId, studentId, cancellationToken);
+
+    private static Error SemesterNotFound() => Error.NotFound("semester_not_found", "Semester was not found for this student.");
+
     private static Course BuildCourse(Guid studentId, CourseInputDto dto) =>
         dto.InputType == GradeInputType.NumericMark
             ? Course.CreateNumeric(studentId, dto.Name, dto.Code, dto.CreditHours, dto.NumericMark!.Value)
             : Course.CreateLetterGrade(studentId, dto.Name, dto.Code, dto.CreditHours, dto.LetterGrade!);
 }
+

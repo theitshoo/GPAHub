@@ -85,8 +85,8 @@ public class SemesterService : ISemesterService
             return Result.Fail(NotFound());
         }
 
-        var courses = await _courseRepository.ListByStudentAsync(studentId, semesterId, cancellationToken) ?? [];
-        foreach (var course in courses.Where(c => c.SemesterId == semesterId))
+        var attachedCourses = await _courseRepository.ListBySemesterTrackedAsync(studentId, semesterId, cancellationToken);
+        foreach (var course in attachedCourses)
         {
             course.RemoveFromSemester();
         }

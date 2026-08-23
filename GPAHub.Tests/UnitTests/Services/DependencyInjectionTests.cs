@@ -23,6 +23,7 @@ public class DependencyInjectionTests
         services.AddScoped(_ => Mock.Of<ISemesterRepository>());
         services.AddScoped(_ => Mock.Of<IGpaRecordRepository>());
         services.AddScoped(_ => Mock.Of<ITargetPlanRepository>());
+        services.AddScoped(_ => Mock.Of<IRefreshTokenRepository>());
         services.AddScoped(_ => Mock.Of<IUnitOfWork>());
         services.AddScoped(_ => Mock.Of<ITokenService>());
 

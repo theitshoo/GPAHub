@@ -8,6 +8,8 @@ public interface ICourseRepository
 
     Task<IReadOnlyList<Course>> ListByStudentAsync(Guid studentId, Guid? semesterId = null, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<Course>> ListBySemesterTrackedAsync(Guid studentId, Guid semesterId, CancellationToken cancellationToken = default);
+
     Task AddAsync(Course course, CancellationToken cancellationToken = default);
 
     void Remove(Course course);
