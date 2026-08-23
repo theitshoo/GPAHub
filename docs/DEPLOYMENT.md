@@ -1,10 +1,10 @@
-# GPAHub — Production Deployment (Docker Compose)
+# GPAHub - Production Deployment (Docker Compose)
 
 ## Prerequisites
 
 - Docker Engine 24+ with the Compose plugin
 - A Stripe account: publishable/secret key pair from *Developers → API keys* and a webhook endpoint secret created in *Developers → Webhooks* pointing at `https://<your-domain>/api/payments/webhook/stripe` with event `checkout.session.completed`
-- A reverse proxy (nginx/Caddy/Traefik) in front of the API for TLS termination — the API container itself listens on plain HTTP :8080
+- A reverse proxy (nginx/Caddy/Traefik) in front of the API for TLS termination - the API container itself listens on plain HTTP :8080
 
 ## 1. Configure secrets
 
