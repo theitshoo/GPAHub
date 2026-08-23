@@ -20,11 +20,6 @@
     Your Academic Performance, All in One Place.
   </text>
 
-  <text x="40" y="150" font-family="Segoe UI, Roboto, Arial" font-size="13" fill="#64748b">
-    GPA Calculation · Target Planning · Premium Analytics · Stripe Billing
-  </text>
-
-  <rect x="40" y="164" width="220" height="3" rx="1.5" fill="url(#accent)"/>
 
   <g transform="translate(800,40)">
     <text x="60" y="62" text-anchor="middle" font-family="Segoe UI, Roboto, Arial" font-size="30" fill="#ffffff" font-weight="700">
