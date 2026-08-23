@@ -18,7 +18,7 @@ GPAHub/
 │   ├── folder-hierarchy.md              # This file
 │   └── Deployment.md                    # Docker Compose production guide
 │
-├── GPAHub.Domain/                       # ◆ Zero dependencies — pure business core
+├── GPAHub.Domain/                       # ◆ Zero dependencies - pure business core
 │   ├── Constants/
 │   │   ├── CombinationLimits.cs         # Caps for premium combination search (DR-008)
 │   │   ├── FeatureFlags.cs              # Plan capability flags (reference data)
@@ -185,7 +185,7 @@ GPAHub/
 │   ├── Program.cs                       # Composition, migrations+seed on start, pipeline
 │   └── GPAHub.Web.csproj
 │
-├── GPAHub.Tests/                        # ◆ xUnit + Moq — 314 tests
+├── GPAHub.Tests/                        # ◆ xUnit + Moq - 314 tests
 │   ├── IntegrationTests/
 │   │   ├── LocalDbFixture.cs            # Per-test real SQL Server LocalDB database
 │   │   ├── GpaHubApiFactory.cs          # WebApplicationFactory w/ isolated DB + config
@@ -215,4 +215,4 @@ GPAHub/
 | **Infrastructure** | ✔ | ✔ | — | ✗ |
 | **Web** | ✔ | ✔ | ✔ | — |
 
-Anything not listed is forbidden by project-reference enforcement — the compiler is the first architecture reviewer.
+Anything not listed is forbidden by project-reference enforcement - the compiler is the first architecture reviewer.
