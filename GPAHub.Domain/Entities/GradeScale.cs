@@ -75,6 +75,29 @@ public sealed class GradeScale
 
     public void Deactivate() => IsActive = false;
 
+    public GradeDefinition? FindDefinitionForMark(int mark) =>
+        _definitions.FirstOrDefault(d => mark >= d.MinMark && mark <= d.MaxMark);
+
+    public GradeDefinition? FindDefinitionForGradeName(string gradeName)
+    {
+        if (string.IsNullOrWhiteSpace(gradeName))
+        {
+            return null;
+        }
+
+        return _definitions.FirstOrDefault(d => d.HasSameNameAs(gradeName));
+    }
+
+    public decimal GetMaxGpaPoints()
+    {
+        if (_definitions.Count == 0)
+        {
+            throw new DomainException("Cannot determine maximum GPA points: scale has no grade definitions.");
+        }
+
+        return _definitions.Max(d => d.Points);
+    }
+
     public void EnsureValid()
     {
         var errors = new List<string>();
