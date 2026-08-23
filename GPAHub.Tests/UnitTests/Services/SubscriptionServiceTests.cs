@@ -14,11 +14,22 @@ public class SubscriptionServiceTests
 {
     private readonly Mock<ISubscriptionRepository> _repo = new();
     private readonly Mock<IUnitOfWork> _uow = new();
+    private readonly Mock<IPremiumActivationService> _activation = new();
     private readonly SubscriptionService _service;
 
     public SubscriptionServiceTests()
     {
-        _service = new SubscriptionService(_repo.Object, _uow.Object, new UpgradeToPremiumDtoValidator());
+        _service = new SubscriptionService(_repo.Object, _uow.Object, _activation.Object, new UpgradeToPremiumDtoValidator());
+
+        _activation.Setup(a => a.CreateActivePremiumAsync(
+                It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid studentId, DateTimeOffset now, int? durationDays, CancellationToken _) =>
+            {
+                var premium = new Subscription(studentId, SubscriptionType.Premium, now,
+                    durationDays.HasValue ? now.AddDays(durationDays.Value) : null);
+                premium.AddPayment(9.99m, "USD", now, $"act-{Guid.NewGuid():N}").MarkCompleted();
+                return premium;
+            });
     }
 
     [Fact]
@@ -85,11 +96,8 @@ public class SubscriptionServiceTests
         Assert.Equal(SubscriptionType.Premium, result.Value.Type);
         Assert.True(result.Value.IsActive);
 
-        _repo.Verify(r => r.Update(oldFree), Times.Once);
-        _repo.Verify(r => r.AddAsync(It.Is<Subscription>(s =>
-            s.Type == SubscriptionType.Premium &&
-            s.Payments.Single().Status == PaymentStatus.Completed &&
-            s.Payments.Single().Currency == "USD"), It.IsAny<CancellationToken>()), Times.Once);
+        _activation.Verify(a => a.CreateActivePremiumAsync(
+            StudentId, It.IsAny<DateTimeOffset>(), 30, It.IsAny<CancellationToken>()), Times.Once);
         _uow.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -152,9 +160,10 @@ public class SubscriptionServiceTests
         Assert.True(result.IsFailure);
     }
 
-    private static Guid StudentId => Guid.NewGuid();
+    private static readonly Guid StudentId = Guid.NewGuid();
 
     private void SetupLatest(Subscription? subscription) =>
         _repo.Setup(r => r.GetLatestForStudentAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(subscription);
 }
+

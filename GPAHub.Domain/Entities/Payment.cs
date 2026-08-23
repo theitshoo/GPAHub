@@ -7,7 +7,7 @@ public sealed class Payment
 {
     public Guid Id { get; private set; }
 
-    public Guid SubscriptionId { get; private set; }
+    public Guid? SubscriptionId { get; private set; }
 
     public decimal Amount { get; private set; }
 
@@ -25,7 +25,7 @@ public sealed class Payment
         ExternalReference = string.Empty;
     }
 
-    internal Payment(Guid subscriptionId, decimal amount, string currency, DateTimeOffset occurredAtUtc, string externalReference)
+    internal Payment(Guid? subscriptionId, decimal amount, string currency, DateTimeOffset occurredAtUtc, string externalReference)
     {
         var money = new ValueObjects.Money(amount, currency);
 
@@ -42,6 +42,16 @@ public sealed class Payment
         ExternalReference = externalReference.Trim();
         OccurredAtUtc = occurredAtUtc;
     }
+
+    public static Payment CreatePending(
+        Guid? subscriptionId,
+        decimal amount,
+        string currency,
+        DateTimeOffset occurredAtUtc,
+        string externalReference) =>
+        new(subscriptionId, amount, currency, occurredAtUtc, externalReference);
+
+    public void AttachToSubscription(Guid subscriptionId) => SubscriptionId = subscriptionId;
 
     public void MarkCompleted()
     {

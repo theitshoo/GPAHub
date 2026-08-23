@@ -28,14 +28,11 @@ internal class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription
 
         builder.HasIndex(s => s.StudentId);
 
+        builder.AddRowVersion();
+
         builder.ToTable(t => t.HasCheckConstraint(
             "CK_Subscriptions_DateRange",
             "[EndDate] IS NULL OR [EndDate] >= [StartDate]"));
-
-        builder.HasMany(s => s.Payments)
-            .WithOne()
-            .HasForeignKey(p => p.SubscriptionId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
@@ -44,6 +41,8 @@ internal class PaymentConfiguration : IEntityTypeConfiguration<Payment>
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
         builder.ToTable("Payments");
+
+        builder.AddRowVersion();
 
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).ValueGeneratedNever();
@@ -63,6 +62,14 @@ internal class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.Status)
             .IsRequired()
             .HasConversion<int>();
+
+        builder.HasOne<Subscription>()
+            .WithMany(s => s.Payments)
+            .HasForeignKey(p => p.SubscriptionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(p => p.ExternalReference)
+            .IsUnique();
 
         builder.ToTable(t => t.HasCheckConstraint("CK_Payments_Amount", "[Amount] >= 0"));
     }
@@ -91,3 +98,5 @@ internal class PlanConfiguration : IEntityTypeConfiguration<Plan>
             .HasMaxLength(2000);
     }
 }
+
+

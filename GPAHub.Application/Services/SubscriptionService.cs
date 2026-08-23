@@ -15,12 +15,18 @@ public class SubscriptionService : ISubscriptionService
 {
     private readonly ISubscriptionRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPremiumActivationService _premiumActivation;
     private readonly UpgradeToPremiumDtoValidator _validator;
 
-    public SubscriptionService(ISubscriptionRepository repository, IUnitOfWork unitOfWork, UpgradeToPremiumDtoValidator validator)
+    public SubscriptionService(
+        ISubscriptionRepository repository,
+        IUnitOfWork unitOfWork,
+        IPremiumActivationService premiumActivation,
+        UpgradeToPremiumDtoValidator validator)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
+        _premiumActivation = premiumActivation;
         _validator = validator;
     }
 
@@ -74,22 +80,11 @@ public class SubscriptionService : ISubscriptionService
             }
 
             var now = DateTimeOffset.UtcNow;
-            var premium = new Subscription(
-                studentId,
-                SubscriptionType.Premium,
-                now,
-                dto.DurationDays.HasValue ? now.AddDays(dto.DurationDays.Value) : null);
+            var premium = await _premiumActivation.CreateActivePremiumAsync(studentId, now, dto.DurationDays, cancellationToken);
 
             var payment = premium.AddPayment(dto.Amount, dto.Currency, now, dto.ExternalReference);
             payment.MarkCompleted();
 
-            if (current is not null)
-            {
-                current.Expire();
-                _repository.Update(current);
-            }
-
-            await _repository.AddAsync(premium, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<SubscriptionDto>.Ok(new SubscriptionDto(

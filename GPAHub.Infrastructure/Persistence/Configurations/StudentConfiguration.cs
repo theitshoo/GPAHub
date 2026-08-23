@@ -43,5 +43,8 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
 
         builder.Property(s => s.CompletedCreditHours)
             .HasPrecision(DecimalPrecision.StandardPrecision, DecimalPrecision.StandardScale);
+
+        builder.AddRowVersion();
     }
 }
+

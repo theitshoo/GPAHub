@@ -25,6 +25,8 @@ public static class DependencyInjection
         services.AddScoped<ISemesterService, SemesterService>();
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IPremiumActivationService, PremiumActivationService>();
         services.AddScoped<IPasswordHasher<Student>, PasswordHasher<Student>>();
 
         services.AddScoped<CreateGradeScaleDtoValidator>();

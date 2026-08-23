@@ -9,4 +9,8 @@ public interface IRefreshTokenRepository
     Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default);
 
     Task<int> RevokeAllActiveForStudentAsync(Guid studentId, DateTimeOffset revokedAtUtc, CancellationToken cancellationToken = default);
+
+    Task<int> PurgeExpiredAsync(DateTimeOffset expiredCutoffUtc, CancellationToken cancellationToken = default);
+
+    Task<int> PurgeRevokedAsync(DateTimeOffset revokedCutoffUtc, CancellationToken cancellationToken = default);
 }

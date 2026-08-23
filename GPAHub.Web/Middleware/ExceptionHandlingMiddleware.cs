@@ -1,5 +1,6 @@
 using GPAHub.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GPAHub.Web.Middleware;
 
@@ -7,11 +8,16 @@ public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly IHostEnvironment _environment;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public ExceptionHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionHandlingMiddleware> logger,
+        IHostEnvironment environment)
     {
         _next = next;
         _logger = logger;
+        _environment = environment;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -31,6 +37,10 @@ public class ExceptionHandlingMiddleware
         var (status, title, includeDetails) = exception switch
         {
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Authentication is required.", false),
+            DbUpdateConcurrencyException => (
+                StatusCodes.Status409Conflict,
+                "This record was modified by someone else. Reload your changes and try again.",
+                false),
             DomainException => (StatusCodes.Status409Conflict, "The request violates a business rule.", true),
             OperationCanceledException => (StatusCodes.Status499ClientClosedRequest, "Request cancelled.", false),
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.", false)
@@ -60,9 +70,19 @@ public class ExceptionHandlingMiddleware
             Instance = context.Request.Path
         };
 
+        if (status == StatusCodes.Status409Conflict && exception is DbUpdateConcurrencyException)
+        {
+            problem.Extensions["code"] = "concurrency_conflict";
+        }
+
         if (includeDetails && !string.IsNullOrWhiteSpace(exception.Message))
         {
             problem.Detail = exception.Message;
+        }
+
+        if (_environment.IsDevelopment() && status == StatusCodes.Status500InternalServerError)
+        {
+            problem.Extensions["exception"] = exception.ToString();
         }
 
         await context.Response.WriteAsJsonAsync(problem);

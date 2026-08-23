@@ -10,6 +10,8 @@ internal class GradeScaleConfiguration : IEntityTypeConfiguration<GradeScale>
     {
         builder.ToTable("GradeScales");
 
+        builder.AddRowVersion();
+
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).ValueGeneratedNever();
 
@@ -59,8 +61,12 @@ internal class GradeDefinitionConfiguration : IEntityTypeConfiguration<GradeDefi
         builder.HasIndex(d => new { d.GradeScaleId, d.Name })
             .IsUnique();
 
+        builder.AddRowVersion();
+
         builder.ToTable(t => t.HasCheckConstraint("CK_GradeDefinitions_MarkRange", "[MinMark] <= [MaxMark] AND [MinMark] >= 0 AND [MaxMark] <= 100"));
 
         builder.ToTable(t => t.HasCheckConstraint("CK_GradeDefinitions_Points", "[Points] >= 0"));
     }
 }
+
+

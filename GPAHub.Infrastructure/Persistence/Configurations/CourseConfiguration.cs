@@ -10,6 +10,8 @@ internal class SemesterConfiguration : IEntityTypeConfiguration<Semester>
     {
         builder.ToTable("Semesters");
 
+        builder.AddRowVersion();
+
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).ValueGeneratedNever();
 
@@ -70,6 +72,10 @@ internal class CourseConfiguration : IEntityTypeConfiguration<Course>
 
         builder.ToTable(t => t.HasCheckConstraint("CK_Courses_CreditHours", "[CreditHours] > 0"));
 
+        builder.AddRowVersion();
+
         builder.ToTable(t => t.HasCheckConstraint("CK_Courses_MarkRange", "[NumericMark] IS NULL OR ([NumericMark] >= 0 AND [NumericMark] <= 100)"));
     }
 }
+
+

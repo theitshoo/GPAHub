@@ -10,6 +10,8 @@ internal class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken
     {
         builder.ToTable("RefreshTokens");
 
+        builder.AddRowVersion();
+
         builder.HasKey(t => t.Id);
         builder.Property(t => t.Id).ValueGeneratedNever();
 
@@ -28,3 +30,4 @@ internal class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken
         builder.HasIndex(t => t.StudentId);
     }
 }
+

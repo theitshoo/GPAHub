@@ -32,4 +32,14 @@ public class RefreshTokenRepository : IRefreshTokenRepository
 
         return activeTokens.Count;
     }
+
+    public Task<int> PurgeExpiredAsync(DateTimeOffset expiredCutoffUtc, CancellationToken cancellationToken = default) =>
+        _context.RefreshTokens
+            .Where(t => t.ExpiresAtUtc < expiredCutoffUtc)
+            .ExecuteDeleteAsync(cancellationToken);
+
+    public Task<int> PurgeRevokedAsync(DateTimeOffset revokedCutoffUtc, CancellationToken cancellationToken = default) =>
+        _context.RefreshTokens
+            .Where(t => t.RevokedAtUtc != null && t.RevokedAtUtc < revokedCutoffUtc)
+            .ExecuteDeleteAsync(cancellationToken);
 }

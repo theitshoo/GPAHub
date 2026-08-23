@@ -10,6 +10,8 @@ public sealed class GpaHubApiFactory : WebApplicationFactory<Program>
 {
     private readonly string _databaseName = $"GPAHub_ApiTests_{Guid.NewGuid():N}";
 
+    public const string StripeWebhookSecret = "whsec_test_secret_for_integration_tests";
+
     public GpaHubDbContext CreateDbContext()
     {
         var scope = Services.CreateAsyncScope();
@@ -23,5 +25,6 @@ public sealed class GpaHubApiFactory : WebApplicationFactory<Program>
 
         builder.UseSetting("Jwt:SecretKey", "test-secret-key-for-api-tests-only-0123456789abcdef");
         builder.UseSetting("Cors:AllowedOrigins", "http://localhost:3000");
+        builder.UseSetting("Stripe:WebhookSecret", StripeWebhookSecret);
     }
 }

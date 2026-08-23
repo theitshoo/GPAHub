@@ -24,6 +24,8 @@ public class DependencyInjectionTests
         services.AddScoped(_ => Mock.Of<IGpaRecordRepository>());
         services.AddScoped(_ => Mock.Of<ITargetPlanRepository>());
         services.AddScoped(_ => Mock.Of<IRefreshTokenRepository>());
+        services.AddScoped(_ => Mock.Of<IPaymentGateway>());
+        services.AddScoped(_ => Mock.Of<IPaymentRepository>());
         services.AddScoped(_ => Mock.Of<IUnitOfWork>());
         services.AddScoped(_ => Mock.Of<ITokenService>());
 
@@ -41,6 +43,9 @@ public class DependencyInjectionTests
         Assert.NotNull(provider.GetRequiredService<IReportService>());
         Assert.NotNull(provider.GetRequiredService<ISemesterService>());
         Assert.NotNull(provider.GetRequiredService<IAuthService>());
+        Assert.NotNull(provider.GetRequiredService<IPaymentService>());
+        Assert.NotNull(provider.GetRequiredService<IPremiumActivationService>());
     }
 }
+
 
